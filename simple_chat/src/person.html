@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg"
+        href="https://raw.githubusercontent.com/YpaaWe/svg/main/public_FILL0_wght400_GRAD0_opsz48.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300&family=Zen+Old+Mincho:wght@900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>MQLL</title>
+    <style>
+        #title {
+            margin-top: 50px;
+            text-align: right;
+            font-family: Dirty Ames;
+            font-size: 40px;
+            letter-spacing: -20px;
+            margin-right: 2%;
+        }
+        body {
+            background-color: rgba(0, 0, 0, 0.24);
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 200,
+                'GRAD' 0,
+                'opsz' 48
+        }
+
+        #one_person {
+            display: inline-block;
+            height: auto;
+            width: 100px;
+        }
+
+        #setting {
+            width: 50px;
+            height: auto;
+        }
+
+        #icons {
+            margin-top: 0px;
+            margin-left: 90%;
+        }
+
+        #support {
+            margin-top: 30px;
+            margin-left: 90%;
+        }
+
+        #inputText {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 30%;
+            height: 5%;
+        }
+
+        textarea:focus {
+            outline: rgba(255, 0, 0, 0);
+        }
+
+        #messageList{
+            margin-left: 5%;
+            margin-top: -15%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="title">
+        MQLL
+    </div>
+    <div id="main">
+        <div id="icons">
+            <img src="https://raw.githubusercontent.com/YpaaWe/svg/main/person_FILL0_wght100_GRAD-25_opsz48.svg"
+                id="one_person">
+        </div>
+        <div id="support">
+            <a href="http://twitter.com/share? url={http://127.0.0.1:3000/Documents/brg/1.html}">
+                <img src="https://raw.githubusercontent.com/YpaaWe/svg/main/share_FILL0_wght100_GRAD-25_opsz48.svg"
+                    id="setting">
+            </a>
+            <a href="mailto:191029ilike@gmail.com">
+                <img src="https://raw.githubusercontent.com/YpaaWe/svg/main/support_agent_FILL0_wght100_GRAD-25_opsz48.svg"
+                    id="setting">
+            </a>
+        </div>
+        <div id="messageList">
+        </div>
+        <textarea id="inputText">
+        </textarea>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        const socket = io();
+
+        const clearText = () => {
+            document.getElementById('inputText').value = '';
+        }
+
+        const addMessageList = (message) => {
+            const return_word = document.getElementById('messageList');
+
+            const p = document.createElement('p');
+            const text = document.createTextNode(message);
+            // pの中にtextを入れる
+            p.appendChild(text);
+            //元を作る
+            return_word.appendChild(p);
+        };
+        document.addEventListener('keypress', () => {
+            if (event.shiftKey && event.key === 'Enter') {
+                let inputMessage = document.getElementById('inputText').value;
+                if (inputMessage === '') {
+                    return;
+                }
+                socket.emit('sendMessage', inputMessage);
+                clearText();
+            }
+        });
+
+        //  'receiveMessage' イベントの発火を検知
+        //  第一引数には受信したメッセージが入る
+        socket.on('receiveMessage', (message) => {
+            // 受信したメッセージをulタグに挿入
+            addMessageList(message);
+        });
+    </script>
+    </div>
+</body>
+
+</html>
